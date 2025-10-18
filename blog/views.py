@@ -15,7 +15,6 @@ class BlogPostListView(ListView):
     context_object_name = 'posts'
 
     def get_queryset(self):
-        # Только опубликованные статьи
         return BlogPost.objects.filter(is_published=True)
 
 
