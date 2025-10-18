@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Новая статья — Skystore{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{% if object %}Редактировать статью{% else %}Создать статью{% endif %}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Заголовок</label>
+            {{ form.title }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Содержимое</label>
+            {{ form.content }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Превью (изображение)</label>
+            {{ form.preview }}
+        </div>
+        <div class="mb-3 form-check">
+            {{ form.is_published }}
+            <label class="form-check-label">Опубликовать</label>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            {% if object %}Сохранить{% else %}Создать{% endif %}
+        </button>
+        <a href="{% url 'blog:post_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
