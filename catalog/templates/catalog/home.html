@@ -10,6 +10,11 @@
 </div>
 
 <div class="container">
+    <div class="mb-4 text-end">
+        <a href="{% url 'catalog:product_create' %}" class="btn btn-success">Создать товар</a>
+        <a href="{% url 'blog:post_list' %}" class="btn btn-info">Блог</a>
+    </div>
+
     <div class="row">
         {% for product in products %}
         <div class="col-md-4 mb-4">
@@ -27,6 +32,10 @@
                     <div class="mt-auto">
                         <p class="text-primary fw-bold">{{ product.price }} ₽</p>
                         <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-primary">Подробнее</a>
+                        <div class="mt-2">
+                            <a href="{% url 'catalog:product_edit' product.pk %}" class="btn btn-sm btn-outline-warning">Редактировать</a>
+                            <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        </div>
                     </div>
                 </div>
             </div>
