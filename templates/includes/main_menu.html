@@ -1,0 +1,19 @@
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
+    <nav class="ms-5">
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home' %}">Каталог</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts' %}">Контакты</a>
+    </nav>
+    <nav class="ms-5">
+            {% if user.is_authenticated %}
+                <span class="text-black me-3">Привет, {{ user.email }}!</span>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">Выйти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">Вход</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-success">Регистрация</a>
+            {% endif %}
+        </nav>
+</div>
