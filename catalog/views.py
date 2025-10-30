@@ -5,10 +5,15 @@ from django.views.generic import (
 )
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from .forms import ProductForm
-from .models import Product
+from .models import Product, Category
+from .services import get_products_by_category
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -25,9 +30,10 @@ class ProductListView(ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Product.objects.all()
-        return Product.objects.filter(is_published=True)
+        if not cache.get('all_products'):
+            products = list(Product.objects.all())
+            cache.set('all_products', products, 60 * 10)
+        return cache.get('all_products')
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -65,3 +71,17 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         if obj.owner == user or user.groups.filter(name="Модератор продуктов").exists():
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied
+
+class ProductsByCategoryView(ListView):
+    model = Product
+    template_name = 'catalog/products_by_category.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_id = self.kwargs['category_id']
+        return get_products_by_category(category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.get(id=self.kwargs['category_id'])
+        return context
